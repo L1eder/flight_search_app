@@ -86,9 +86,6 @@ fun FlightSearchScreen(viewModel: FlightViewModel) {
                     viewModel.removeFavorite(favorite)
                 }
             )
-        } else if (searchQuery.isNotBlank()) {
-            Text("Нет доступных маршрутов для '$searchQuery'")
         }
-
     }
 }
