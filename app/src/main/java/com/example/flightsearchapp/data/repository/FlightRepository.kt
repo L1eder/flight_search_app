@@ -2,7 +2,6 @@ package com.example.flightsearchapp.data.repository
 
 import com.example.flightsearchapp.data.database.FavoriteDao
 import com.example.flightsearchapp.data.database.AirportDao
-import com.example.flightsearchapp.data.models.Airport
 import com.example.flightsearchapp.data.models.Favorite
 
 class FlightRepository(private val airportDao: AirportDao, private val favoriteDao: FavoriteDao) {
@@ -12,5 +11,5 @@ class FlightRepository(private val airportDao: AirportDao, private val favoriteD
     suspend fun getAirportByCode(code: String) = airportDao.getAirportByCode(code)
     suspend fun getAirportSuggestions(query: String) = airportDao.getAirportSuggestions(query)
     suspend fun getDestinations(departureCode: String) = airportDao.getDestinations(departureCode)
-    suspend fun getAllAirports(): List<Airport> {return airportDao.getAllAirports()}
+    suspend fun deleteFavorite(favorite: Favorite) {favoriteDao.deleteFavorite(favorite)}
 }
