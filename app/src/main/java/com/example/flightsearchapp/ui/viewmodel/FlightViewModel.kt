@@ -69,7 +69,6 @@ class FlightViewModel(private val repository: FlightRepository, private val pref
         viewModelScope.launch {
             val destinations = repository.getDestinations(airport.iataCode)
             _routes.value = destinations
-            addFavoriteRoute(airport.iataCode, destinations.firstOrNull()?.iataCode ?: "")
         }
     }
 
