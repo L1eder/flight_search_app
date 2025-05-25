@@ -27,9 +27,10 @@ fun AvailableRoutesList(
 ) {
     LazyColumn {
         items(routes) { destinationAirport ->
-            val isFavorite = favorites.any {
+            val favoriteToRemove = favorites.find {
                 it.departureCode == searchQuery && it.destinationCode == destinationAirport.iataCode
             }
+            val isFavorite = favoriteToRemove != null
 
             Card(
                 modifier = Modifier.padding(8.dp),
@@ -47,8 +48,8 @@ fun AvailableRoutesList(
                         modifier = Modifier.weight(1f),
                     )
                     IconButton(onClick = {
-                        if (isFavorite) {
-                            onRemoveFavorite(Favorite(departureCode = searchQuery, destinationCode = destinationAirport.iataCode))
+                        if (isFavorite && favoriteToRemove != null) {
+                            onRemoveFavorite(favoriteToRemove)
                         } else {
                             onAddFavorite(searchQuery, destinationAirport.iataCode)
                         }

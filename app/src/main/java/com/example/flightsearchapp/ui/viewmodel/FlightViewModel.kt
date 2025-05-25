@@ -1,6 +1,5 @@
 package com.example.flightsearchapp.ui.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.flightsearchapp.data.models.Airport
@@ -74,7 +73,7 @@ class FlightViewModel(private val repository: FlightRepository, private val pref
     fun onAirportSelected(airport: Airport) {
         viewModelScope.launch {
             val destinations = repository.getDestinations(airport.iataCode)
-            _routes.value = if (destinations.isNotEmpty()) destinations else emptyList() // Обновляем маршруты
+            _routes.value = if (destinations.isNotEmpty()) destinations else emptyList()
         }
     }
 
@@ -88,13 +87,14 @@ class FlightViewModel(private val repository: FlightRepository, private val pref
     fun addFavoriteRoute(departureCode: String, destinationCode: String) {
         viewModelScope.launch {
             if (departureCode.isNotEmpty() && destinationCode.isNotEmpty()) {
-                val existingFavorite = favorites.value.find {
-                    it.departureCode == departureCode && it.destinationCode == destinationCode
-                }
-                if (existingFavorite == null) {
-                    val favorite = Favorite(departureCode = departureCode, destinationCode = destinationCode)
+                val favorite = Favorite(departureCode = departureCode, destinationCode = destinationCode)
+                val currentFavorites = _favorites.value.toMutableList()
+
+                if (!currentFavorites.contains(favorite)) {
+                    currentFavorites.add(favorite)
+                    _favorites.value = currentFavorites
+
                     repository.insertFavorite(favorite)
-                    loadFavorites()
                 }
             }
         }
@@ -102,10 +102,17 @@ class FlightViewModel(private val repository: FlightRepository, private val pref
 
     fun removeFavorite(favorite: Favorite) {
         viewModelScope.launch {
-            repository.deleteFavorite(favorite)
-            loadFavorites()
+            val currentFavorites = _favorites.value.toMutableList()
+
+            if (currentFavorites.contains(favorite)) {
+                currentFavorites.remove(favorite)
+                _favorites.value = currentFavorites
+                repository.deleteFavorite(favorite)
+                loadFavoritesWithNames()
+            }
         }
     }
+
 
     private fun loadFavoritesWithNames() {
         viewModelScope.launch {
