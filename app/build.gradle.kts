@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -40,6 +41,24 @@ android {
 }
 
 dependencies {
+    // Jetpack Compose
+    implementation ("androidx.compose.ui:ui:1.8.2")
+    implementation ("androidx.compose.material:material:1.8.2")
+    implementation ("androidx.compose.ui:ui-tooling-preview:1.8.2")
+
+    // Lifecycle и ViewModel для Compose
+    implementation (libs.androidx.lifecycle.runtime.ktx.v261)
+
+    // Room компоненты
+    implementation (libs.androidx.room.runtime)
+
+    // Для поддержки Kotlin Coroutines с Room (опционально)
+    implementation (libs.androidx.room.ktx)
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.datastore.core.android)
+    kapt(libs.androidx.room.compiler)
+
+    implementation ("androidx.datastore:datastore-preferences:1.1.7")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
