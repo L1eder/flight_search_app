@@ -84,17 +84,21 @@ class FlightViewModel(private val repository: FlightRepository, private val pref
         }
     }
 
+    private suspend fun refreshFavorites() {
+        _favorites.value = repository.getFavorites()
+        loadFavoritesWithNames()
+    }
+
     fun addFavoriteRoute(departureCode: String, destinationCode: String) {
         viewModelScope.launch {
             if (departureCode.isNotEmpty() && destinationCode.isNotEmpty()) {
                 val favorite = Favorite(departureCode = departureCode, destinationCode = destinationCode)
-                val currentFavorites = _favorites.value.toMutableList()
 
-                if (!currentFavorites.contains(favorite)) {
-                    currentFavorites.add(favorite)
-                    _favorites.value = currentFavorites
+                val existingFavorites = repository.getFavorites()
 
+                if (!existingFavorites.contains(favorite)) {
                     repository.insertFavorite(favorite)
+                    refreshFavorites()
                 }
             }
         }
@@ -102,17 +106,13 @@ class FlightViewModel(private val repository: FlightRepository, private val pref
 
     fun removeFavorite(favorite: Favorite) {
         viewModelScope.launch {
-            val currentFavorites = _favorites.value.toMutableList()
+            repository.deleteFavorite(favorite)
 
-            if (currentFavorites.contains(favorite)) {
-                currentFavorites.remove(favorite)
-                _favorites.value = currentFavorites
-                repository.deleteFavorite(favorite)
-                loadFavoritesWithNames()
-            }
+            val updatedFavorites = _favorites.value.toMutableList()
+            updatedFavorites.remove(favorite)
+            refreshFavorites()
         }
     }
-
 
     private fun loadFavoritesWithNames() {
         viewModelScope.launch {
