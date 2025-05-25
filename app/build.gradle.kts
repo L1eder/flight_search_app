@@ -42,9 +42,9 @@ android {
 
 dependencies {
     // Jetpack Compose
-    implementation ("androidx.compose.ui:ui:1.8.2")
-    implementation ("androidx.compose.material:material:1.8.2")
-    implementation ("androidx.compose.ui:ui-tooling-preview:1.8.2")
+    implementation (libs.ui)
+    implementation (libs.androidx.material)
+    implementation (libs.ui.tooling.preview)
 
     // Lifecycle и ViewModel для Compose
     implementation (libs.androidx.lifecycle.runtime.ktx.v261)
@@ -58,7 +58,7 @@ dependencies {
     implementation(libs.androidx.datastore.core.android)
     kapt(libs.androidx.room.compiler)
 
-    implementation ("androidx.datastore:datastore-preferences:1.1.7")
+    implementation (libs.androidx.datastore.preferences)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
