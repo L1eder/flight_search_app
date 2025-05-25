@@ -39,7 +39,7 @@ fun FavoritesList(favoritesWithNames: List<Pair<Favorite, Pair<String, String>>>
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = "Remove from favorites",
-                            tint = Color.Red
+                            tint = Color.Blue
                         )
                     }
                 }

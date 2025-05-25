@@ -22,6 +22,7 @@ fun FlightSearchScreen(viewModel: FlightViewModel) {
     val suggestions by viewModel.airportSuggestions.collectAsState()
     val favoritesWithNames by viewModel.favoritesWithNames.collectAsState()
     val routes by viewModel.routes.collectAsState()
+    val favorites by viewModel.favorites.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.searchQuery.collect { savedQuery ->
@@ -74,9 +75,20 @@ fun FlightSearchScreen(viewModel: FlightViewModel) {
 
         if (searchQuery.isNotBlank() && routes.isNotEmpty()) {
             Text("Доступные рейсы из $searchQuery:")
-            AvailableRoutesList(routes, searchQuery) { departureCode, destinationCode ->
-                viewModel.addFavoriteRoute(departureCode, destinationCode)
-            }
+            AvailableRoutesList(
+                routes,
+                searchQuery,
+                favorites,
+                onAddFavorite = { departureCode, destinationCode ->
+                    viewModel.addFavoriteRoute(departureCode, destinationCode)
+                },
+                onRemoveFavorite = { favorite ->
+                    viewModel.removeFavorite(favorite)
+                }
+            )
+        } else if (searchQuery.isNotBlank()) {
+            Text("Нет доступных маршрутов для '$searchQuery'")
         }
+
     }
 }

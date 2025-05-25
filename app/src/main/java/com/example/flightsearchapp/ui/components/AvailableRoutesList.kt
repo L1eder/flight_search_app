@@ -15,11 +15,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.flightsearchapp.data.models.Airport
+import com.example.flightsearchapp.data.models.Favorite
 
 @Composable
-fun AvailableRoutesList(routes: List<Airport>, searchQuery: String, onAddFavorite: (String, String) -> Unit) {
+fun AvailableRoutesList(
+    routes: List<Airport>,
+    searchQuery: String,
+    favorites: List<Favorite>,
+    onAddFavorite: (String, String) -> Unit,
+    onRemoveFavorite: (Favorite) -> Unit
+) {
     LazyColumn {
         items(routes) { destinationAirport ->
+            val isFavorite = favorites.any {
+                it.departureCode == searchQuery && it.destinationCode == destinationAirport.iataCode
+            }
+
             Card(
                 modifier = Modifier.padding(8.dp),
                 elevation = 4.dp
@@ -35,11 +46,17 @@ fun AvailableRoutesList(routes: List<Airport>, searchQuery: String, onAddFavorit
                         text = "$searchQuery -> ${destinationAirport.iataCode} (${destinationAirport.name})",
                         modifier = Modifier.weight(1f),
                     )
-                    IconButton(onClick = { onAddFavorite(searchQuery, destinationAirport.iataCode) }) {
+                    IconButton(onClick = {
+                        if (isFavorite) {
+                            onRemoveFavorite(Favorite(departureCode = searchQuery, destinationCode = destinationAirport.iataCode))
+                        } else {
+                            onAddFavorite(searchQuery, destinationAirport.iataCode)
+                        }
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Star,
-                            contentDescription = "Add to favorites",
-                            tint = Color.Gray
+                            contentDescription = "Toggle favorite",
+                            tint = if (isFavorite) Color.Yellow else Color.Gray
                         )
                     }
                 }

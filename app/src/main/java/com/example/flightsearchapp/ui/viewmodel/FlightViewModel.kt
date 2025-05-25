@@ -49,17 +49,23 @@ class FlightViewModel(private val repository: FlightRepository, private val pref
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
         saveSearchQuery(query)
+        _routes.value = emptyList()
         searchAirports(query)
     }
 
     fun searchAirports(query: String) {
         viewModelScope.launch {
             _isLoading.value = true
-            _airports.value = repository.searchAirports("%$query%")
+            val results = repository.searchAirports("%$query%")
+            _airports.value = results
+            if (results.isEmpty()) {
+                _routes.value = emptyList()
+            }
             loadSuggestions(query)
             _isLoading.value = false
         }
     }
+
 
     private suspend fun loadSuggestions(query: String) {
         _airportSuggestions.value = repository.getAirportSuggestions("%$query%")
@@ -68,7 +74,7 @@ class FlightViewModel(private val repository: FlightRepository, private val pref
     fun onAirportSelected(airport: Airport) {
         viewModelScope.launch {
             val destinations = repository.getDestinations(airport.iataCode)
-            _routes.value = destinations
+            _routes.value = if (destinations.isNotEmpty()) destinations else emptyList() // Обновляем маршруты
         }
     }
 
@@ -114,7 +120,6 @@ class FlightViewModel(private val repository: FlightRepository, private val pref
     }
 
     private fun saveSearchQuery(query: String) {
-        _searchQuery.value = query
         viewModelScope.launch {
             preferencesManager.saveSearchQuery(query)
         }
