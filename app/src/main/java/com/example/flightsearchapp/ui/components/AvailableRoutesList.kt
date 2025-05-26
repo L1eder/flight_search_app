@@ -66,7 +66,7 @@ fun AvailableRoutesList(
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = null,
-                            tint = if (isFavorite) Color.Blue else Color.Gray
+                            tint = if (isFavorite) MaterialTheme.colorScheme.surfaceTint else Color.Gray
                         )
                     }
                 }

@@ -49,7 +49,7 @@ fun FavoritesList(favoritesWithNames: List<Pair<Favorite, Pair<String, String>>>
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = null,
-                            tint = Color.Blue
+                            tint = MaterialTheme.colorScheme.surfaceTint
                         )
                     }
                 }
