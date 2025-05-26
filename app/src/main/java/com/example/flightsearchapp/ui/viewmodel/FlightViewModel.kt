@@ -4,13 +4,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.flightsearchapp.data.models.Airport
 import com.example.flightsearchapp.data.models.Favorite
-import com.example.flightsearchapp.data.repository.FlightRepository
+import com.example.flightsearchapp.data.repository.AirportRepository
+import com.example.flightsearchapp.data.repository.FavoriteRepository
 import com.example.flightsearchapp.preferences.PreferencesManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class FlightViewModel(private val repository: FlightRepository, private val preferencesManager: PreferencesManager) : ViewModel() {
+class FlightViewModel(
+    private val airportRepository: AirportRepository,
+    private val favoriteRepository: FavoriteRepository,
+    private val preferencesManager: PreferencesManager
+) : ViewModel() {
+
     private val _airports = MutableStateFlow<List<Airport>>(emptyList())
     val airports: StateFlow<List<Airport>> get() = _airports
 
@@ -55,7 +61,7 @@ class FlightViewModel(private val repository: FlightRepository, private val pref
     fun searchAirports(query: String) {
         viewModelScope.launch {
             _isLoading.value = true
-            val results = repository.searchAirports("%$query%")
+            val results = airportRepository.searchAirports("%$query%")
             _airports.value = results
             if (results.isEmpty()) {
                 _routes.value = emptyList()
@@ -65,27 +71,26 @@ class FlightViewModel(private val repository: FlightRepository, private val pref
         }
     }
 
-
     private suspend fun loadSuggestions(query: String) {
-        _airportSuggestions.value = repository.getAirportSuggestions("%$query%")
+        _airportSuggestions.value = airportRepository.getAirportSuggestions("%$query%")
     }
 
     fun onAirportSelected(airport: Airport) {
         viewModelScope.launch {
-            val destinations = repository.getDestinations(airport.iataCode)
+            val destinations = airportRepository.getDestinations(airport.iataCode)
             _routes.value = if (destinations.isNotEmpty()) destinations else emptyList()
         }
     }
 
     private fun loadFavorites() {
         viewModelScope.launch {
-            _favorites.value = repository.getFavorites()
+            _favorites.value = favoriteRepository.getFavorites()
             loadFavoritesWithNames()
         }
     }
 
     private suspend fun refreshFavorites() {
-        _favorites.value = repository.getFavorites()
+        _favorites.value = favoriteRepository.getFavorites()
         loadFavoritesWithNames()
     }
 
@@ -94,10 +99,10 @@ class FlightViewModel(private val repository: FlightRepository, private val pref
             if (departureCode.isNotEmpty() && destinationCode.isNotEmpty()) {
                 val favorite = Favorite(departureCode = departureCode, destinationCode = destinationCode)
 
-                val existingFavorites = repository.getFavorites()
+                val existingFavorites = favoriteRepository.getFavorites()
 
                 if (!existingFavorites.contains(favorite)) {
-                    repository.insertFavorite(favorite)
+                    favoriteRepository.insertFavorite(favorite)
                     refreshFavorites()
                 }
             }
@@ -106,7 +111,7 @@ class FlightViewModel(private val repository: FlightRepository, private val pref
 
     fun removeFavorite(favorite: Favorite) {
         viewModelScope.launch {
-            repository.deleteFavorite(favorite)
+            favoriteRepository.deleteFavorite(favorite)
 
             val updatedFavorites = _favorites.value.toMutableList()
             updatedFavorites.remove(favorite)
@@ -116,10 +121,10 @@ class FlightViewModel(private val repository: FlightRepository, private val pref
 
     private fun loadFavoritesWithNames() {
         viewModelScope.launch {
-            val favs = repository.getFavorites()
+            val favs = favoriteRepository.getFavorites()
             val favsWithNames = favs.map { fav ->
-                val depAirport = repository.getAirportByCode(fav.departureCode)
-                val destAirport = repository.getAirportByCode(fav.destinationCode)
+                val depAirport = airportRepository.getAirportByCode(fav.departureCode)
+                val destAirport = airportRepository.getAirportByCode(fav.destinationCode)
                 fav to (Pair(depAirport?.name ?: fav.departureCode, destAirport?.name ?: fav.destinationCode))
             }
             _favoritesWithNames.value = favsWithNames
