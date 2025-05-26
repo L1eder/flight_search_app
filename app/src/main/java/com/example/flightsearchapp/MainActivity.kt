@@ -30,7 +30,6 @@ class MainActivity : ComponentActivity() {
 
         val viewModelFactory = FlightViewModelFactory(airportRepository, favoriteRepository, preferencesManager)
 
-        Log.d("ViewModel", "Initializing ViewModel...")
         viewModel = viewModelFactory.create(FlightViewModel::class.java)
 
         setContent {
