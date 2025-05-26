@@ -3,12 +3,14 @@ package com.example.flightsearchapp.ui.components
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,12 +35,18 @@ fun AvailableRoutesList(
             val isFavorite = favoriteToRemove != null
 
             Card(
-                modifier = Modifier.padding(8.dp),
-                elevation = 4.dp
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                shape = MaterialTheme.shapes.medium,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                )
             ) {
                 Row(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(12.dp)
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -46,6 +54,7 @@ fun AvailableRoutesList(
                     Text(
                         text = "$searchQuery -> ${destinationAirport.iataCode} (${destinationAirport.name})",
                         modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.bodyMedium
                     )
                     IconButton(onClick = {
                         if (isFavorite && favoriteToRemove != null) {
@@ -56,8 +65,8 @@ fun AvailableRoutesList(
                     }) {
                         Icon(
                             imageVector = Icons.Default.Star,
-                            contentDescription = "Toggle favorite",
-                            tint = if (isFavorite) Color.Yellow else Color.Gray
+                            contentDescription = null,
+                            tint = if (isFavorite) Color.Blue else Color.Gray
                         )
                     }
                 }
