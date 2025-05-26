@@ -6,10 +6,10 @@ import com.example.flightsearchapp.data.models.Airport
 
 @Dao
 interface AirportDao {
-    @Query("SELECT * FROM airport WHERE name LIKE :query OR iata_code LIKE :query ORDER BY passengers DESC")
+    @Query("SELECT * FROM airport WHERE name LIKE '%' || :query || '%' OR iata_code LIKE '%' || :query || '%' ORDER BY passengers DESC")
     suspend fun searchAirports(query: String): List<Airport>
 
-    @Query("SELECT * FROM airport WHERE name LIKE :query OR iata_code LIKE :query ORDER BY passengers DESC LIMIT 10")
+    @Query("SELECT * FROM airport WHERE name LIKE '%' || :query || '%' OR iata_code LIKE '%' || :query || '%' ORDER BY passengers DESC LIMIT 10")
     suspend fun getAirportSuggestions(query: String): List<Airport>
 
     @Query("SELECT * FROM airport WHERE iata_code != :departureCode ORDER BY passengers DESC")

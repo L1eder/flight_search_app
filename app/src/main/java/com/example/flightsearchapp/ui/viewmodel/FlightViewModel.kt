@@ -18,7 +18,6 @@ class FlightViewModel(
 ) : ViewModel() {
 
     private val _airports = MutableStateFlow<List<Airport>>(emptyList())
-    val airports: StateFlow<List<Airport>> get() = _airports
 
     private val _airportSuggestions = MutableStateFlow<List<Airport>>(emptyList())
     val airportSuggestions: StateFlow<List<Airport>> get() = _airportSuggestions
@@ -31,9 +30,6 @@ class FlightViewModel(
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> get() = _isLoading
-
-    private val _allAirports = MutableStateFlow<List<Airport>>(emptyList())
-    val allAirports: StateFlow<List<Airport>> get() = _allAirports
 
     private val _favoritesWithNames = MutableStateFlow<List<Pair<Favorite, Pair<String, String>>>>(emptyList())
     val favoritesWithNames: StateFlow<List<Pair<Favorite, Pair<String, String>>>> get() = _favoritesWithNames
@@ -61,7 +57,7 @@ class FlightViewModel(
     fun searchAirports(query: String) {
         viewModelScope.launch {
             _isLoading.value = true
-            val results = airportRepository.searchAirports("%$query%")
+            val results = airportRepository.searchAirports(query)
             _airports.value = results
             if (results.isEmpty()) {
                 _routes.value = emptyList()
@@ -72,7 +68,7 @@ class FlightViewModel(
     }
 
     private suspend fun loadSuggestions(query: String) {
-        _airportSuggestions.value = airportRepository.getAirportSuggestions("%$query%")
+        _airportSuggestions.value = airportRepository.getAirportSuggestions(query)
     }
 
     fun onAirportSelected(airport: Airport) {
