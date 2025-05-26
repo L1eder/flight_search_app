@@ -40,7 +40,7 @@ fun AvailableRoutesList(
                     .padding(vertical = 4.dp),
                 shape = MaterialTheme.shapes.medium,
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
+                    containerColor = Color.White,
                     contentColor = MaterialTheme.colorScheme.onSurface
                 )
             ) {

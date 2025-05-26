@@ -29,7 +29,7 @@ fun FavoritesList(favoritesWithNames: List<Pair<Favorite, Pair<String, String>>>
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                 shape = MaterialTheme.shapes.medium,
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
+                    containerColor = Color.White,
                     contentColor = MaterialTheme.colorScheme.onSurface
                 )
             ) {
